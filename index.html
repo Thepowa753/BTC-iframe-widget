@@ -22,7 +22,7 @@
         }
 
         body.light {
-            background: #f7fafc;
+            background: #e6f2ff;
         }
 
         body.dark {
@@ -36,13 +36,40 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             width: 100%;
             height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
             transition: transform 0.3s ease;
             overflow: hidden;
         }
 
+        .widget-container.horizontal {
+            flex-direction: row;
+            justify-content: space-around;
+            padding: 20px;
+        }
+
+        .widget-container.horizontal #widget-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .widget-container.horizontal .crypto-logo {
+            margin: 0;
+        }
+
+        .widget-container.horizontal .crypto-info {
+            text-align: left;
+        }
+
         .widget-container.light {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(230, 242, 255, 0.95);
         }
 
         .widget-container.dark {
@@ -50,20 +77,21 @@
         }
 
         .crypto-logo {
-            width: 80px;
-            height: 80px;
+            width: min(80px, 20vw);
+            height: min(80px, 20vw);
             margin: 0 auto 20px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 40px;
+            font-size: clamp(24px, 5vw, 40px);
             color: white;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
         }
 
         .crypto-name {
-            font-size: 24px;
+            font-size: clamp(16px, 4vw, 24px);
             font-weight: 700;
             margin-bottom: 10px;
             text-transform: uppercase;
@@ -79,7 +107,7 @@
         }
 
         .crypto-price {
-            font-size: 36px;
+            font-size: clamp(20px, 6vw, 36px);
             font-weight: 800;
             margin: 15px 0;
         }
@@ -95,7 +123,7 @@
         }
 
         .fiat-currency {
-            font-size: 16px;
+            font-size: clamp(12px, 3vw, 16px);
             font-weight: 600;
             text-transform: uppercase;
         }
@@ -139,7 +167,7 @@
         }
 
         .update-time {
-            font-size: 11px;
+            font-size: clamp(8px, 2vw, 11px);
             margin-top: 15px;
         }
 
@@ -161,7 +189,7 @@
         }
 
         .price-change {
-            font-size: 14px;
+            font-size: clamp(10px, 2.5vw, 14px);
             margin-top: 10px;
             font-weight: 600;
         }
@@ -172,6 +200,20 @@
 
         .price-change.negative {
             color: #e53e3e;
+        }
+
+        .portfolio-value {
+            font-size: clamp(18px, 5vw, 28px);
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .light .portfolio-value {
+            color: #2d3748;
+        }
+
+        .dark .portfolio-value {
+            color: #e2e8f0;
         }
     </style>
 </head>
@@ -218,6 +260,7 @@
             const theme = (params.get('theme') || 'light').toLowerCase();
             const width = parseInt(params.get('width')) || 300;
             const height = parseInt(params.get('height')) || 200;
+            const quantity = parseFloat(params.get('quantity')) || 0;
             
             // Validate against allowlist
             const validCrypto = SUPPORTED_CRYPTOS.includes(crypto) ? crypto : 'BTC';
@@ -228,12 +271,16 @@
             const validWidth = Math.min(Math.max(width, 100), 2000);
             const validHeight = Math.min(Math.max(height, 100), 2000);
             
+            // Validate quantity (must be positive or 0)
+            const validQuantity = quantity >= 0 ? quantity : 0;
+            
             return {
                 crypto: validCrypto,
                 fiat: validFiat,
                 theme: validTheme,
                 width: validWidth,
-                height: validHeight
+                height: validHeight,
+                quantity: validQuantity
             };
         }
 
@@ -246,6 +293,11 @@
             const container = document.querySelector('.widget-container');
             container.className = 'widget-container'; // Reset to base class
             container.classList.add(theme);
+            
+            // Add horizontal class if width > height
+            if (width > height) {
+                container.classList.add('horizontal');
+            }
             
             // Apply dimensions
             document.body.style.width = `${width}px`;
@@ -340,7 +392,7 @@
         }
 
         // Display crypto widget
-        function displayWidget(crypto, fiat, priceData) {
+        function displayWidget(crypto, fiat, priceData, quantity) {
             const widgetContent = document.getElementById('widget-content');
             const priceChangeClass = priceData.change >= 0 ? 'positive' : 'negative';
             const priceChangeSign = priceData.change >= 0 ? '+' : '';
@@ -358,6 +410,10 @@
             logo.textContent = getCryptoLogo(crypto);
             logo.setAttribute('role', 'img');
             logo.setAttribute('aria-label', `${crypto} logo`);
+            
+            // Create info container for horizontal layout
+            const infoContainer = document.createElement('div');
+            infoContainer.className = 'crypto-info';
             
             // Create name element
             const name = document.createElement('div');
@@ -380,6 +436,25 @@
             priceChange.textContent = `${priceChangeSign}${priceData.change.toFixed(2)}% (24h)`;
             priceChange.setAttribute('aria-label', `Price ${priceChangeDirection} by ${Math.abs(priceData.change).toFixed(2)} percent in the last 24 hours`);
             
+            // Create portfolio value element if quantity is specified
+            let portfolioValue = null;
+            if (quantity > 0) {
+                portfolioValue = document.createElement('div');
+                portfolioValue.className = 'crypto-price';
+                portfolioValue.style.fontSize = 'clamp(18px, 5vw, 28px)';
+                portfolioValue.style.marginTop = '10px';
+                const totalValue = priceData.price * quantity;
+                portfolioValue.textContent = `Portfolio: ${formatPrice(totalValue, fiat)} ${fiat}`;
+                portfolioValue.setAttribute('aria-label', `Portfolio value: ${formatPrice(totalValue, fiat)} ${fiat}`);
+                
+                // Add quantity display
+                const quantityDisplay = document.createElement('div');
+                quantityDisplay.className = 'fiat-currency';
+                quantityDisplay.style.marginTop = '5px';
+                quantityDisplay.textContent = `(${quantity} ${crypto})`;
+                portfolioValue.appendChild(quantityDisplay);
+            }
+            
             // Create update time element
             const updateTime = document.createElement('div');
             updateTime.className = 'update-time';
@@ -388,11 +463,15 @@
             
             // Append all elements
             widgetContent.appendChild(logo);
-            widgetContent.appendChild(name);
-            widgetContent.appendChild(price);
-            widgetContent.appendChild(fiatCurrency);
-            widgetContent.appendChild(priceChange);
-            widgetContent.appendChild(updateTime);
+            infoContainer.appendChild(name);
+            infoContainer.appendChild(price);
+            infoContainer.appendChild(fiatCurrency);
+            infoContainer.appendChild(priceChange);
+            if (portfolioValue) {
+                infoContainer.appendChild(portfolioValue);
+            }
+            infoContainer.appendChild(updateTime);
+            widgetContent.appendChild(infoContainer);
         }
 
         // Show demo data warning
@@ -428,7 +507,7 @@
             isInitializing = true;
             
             try {
-                const { crypto, fiat, theme, width, height } = getUrlParams();
+                const { crypto, fiat, theme, width, height, quantity } = getUrlParams();
                 
                 // Apply theme and dimensions
                 applyThemeAndDimensions(theme, width, height);
@@ -440,7 +519,7 @@
                 }
                 
                 const priceData = await fetchCryptoPrice(crypto, fiat);
-                displayWidget(crypto, fiat, priceData);
+                displayWidget(crypto, fiat, priceData, quantity);
                 
                 // Show demo data indicator on initial load if needed
                 if (priceData.isMock) {
@@ -455,7 +534,7 @@
                     isUpdating = true;
                     try {
                         const updatedPriceData = await fetchCryptoPrice(crypto, fiat);
-                        displayWidget(crypto, fiat, updatedPriceData);
+                        displayWidget(crypto, fiat, updatedPriceData, quantity);
                         
                         // Show demo data indicator if using mock data
                         if (updatedPriceData.isMock) {
