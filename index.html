@@ -446,7 +446,7 @@
             if (quantity > 0) {
                 portfolioValue = document.createElement('div');
                 portfolioValue.className = 'portfolio-value';
-                const totalValue = priceData.price * quantity;
+                const totalValue = (priceData.price * quantity).toFixed(2);
                 portfolioValue.textContent = `Portfolio: ${formatPrice(totalValue, fiat)} ${fiat}`;
                 portfolioValue.setAttribute('aria-label', `Portfolio value: ${formatPrice(totalValue, fiat)} ${fiat}`);
                 
@@ -456,14 +456,7 @@
                 quantityDisplay.style.marginTop = '5px';
                 quantityDisplay.textContent = `(${quantity} ${crypto})`;
                 portfolioValue.appendChild(quantityDisplay);
-            }
-            
-            // Create update time element
-            const updateTime = document.createElement('div');
-            updateTime.className = 'update-time';
-            updateTime.id = 'update-time';
-            updateTime.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
-            
+            }            
             // Append all elements
             widgetContent.appendChild(logo);
             infoContainer.appendChild(name);
@@ -473,7 +466,6 @@
             if (portfolioValue) {
                 infoContainer.appendChild(portfolioValue);
             }
-            infoContainer.appendChild(updateTime);
             widgetContent.appendChild(infoContainer);
         }
 
