@@ -20,7 +20,7 @@ Get data from API and show them in a pretty format. This widget is useful if you
 Embed the widget using an iframe with URL parameters to customize its appearance:
 
 ```html
-<iframe src="https://thepowa753.github.io/BTC-iframe-widget/?crypto=BTC&fiat=USD&theme=light&width=300&height=200" width="300" height="200" frameborder="0"></iframe>
+<iframe src="https://thepowa753.github.io/BTC-iframe-widget/?crypto=BTC&fiat=EUR&theme=dark&width=300&height=200" width="300" height="200" frameborder="0"></iframe>
 ```
 
 ### URL Parameters
