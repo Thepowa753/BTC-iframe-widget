@@ -29,7 +29,7 @@ Embed the widget using an iframe with URL parameters to customize its appearance
 |-----------|-------------|---------|---------|
 | `crypto` | Cryptocurrency to display | `BTC` | `BTC`, `ETH`, `BNB`, `XRP`, `ADA`, `DOGE`, `SOL`, `DOT`, `MATIC`, `LTC`, `AVAX`, `LINK`, `UNI`, `ATOM`, `XLM` |
 | `fiat` | Fiat currency for price | `EUR` | `EUR`, `USD`, `GBP`, `JPY`, `AUD`, `CAD`, `CHF`, `CNY`, `KRW`, `BRL`, `TRY`, `ZAR` |
-| `theme` | Color theme | `light` | `light`, `dark` |
+| `theme` | Color theme | `dark` | `light`, `dark` |
 | `width` | Widget width in pixels | `300` | `100` - `2000` |
 | `height` | Widget height in pixels | `200` | `100` - `2000` |
 | `quantity` | Amount of crypto owned (shows portfolio value) | `0` | Any positive number |
