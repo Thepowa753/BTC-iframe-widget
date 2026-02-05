@@ -380,6 +380,25 @@
             return logos[crypto] || '₿';
         }
 
+        // Get fiat currency symbol
+        function getFiatSymbol(fiat) {
+            const symbols = {
+                'EUR': '€',
+                'USD': '$',
+                'GBP': '£',
+                'JPY': '¥',
+                'AUD': 'A$',
+                'CAD': 'C$',
+                'CHF': 'CHF',
+                'CNY': '¥',
+                'KRW': '₩',
+                'BRL': 'R$',
+                'TRY': '₺',
+                'ZAR': 'R'
+            };
+            return symbols[fiat] || fiat;
+        }
+
         // Format price with appropriate decimals based on currency
         function formatPrice(price, fiat) {
             // JPY and KRW typically don't use decimal places
@@ -425,15 +444,10 @@
             name.className = 'crypto-name';
             name.textContent = crypto;
             
-            // Create price element
+            // Create price element with currency symbol
             const price = document.createElement('div');
             price.className = 'crypto-price';
-            price.textContent = formatPrice(priceData.price, fiat);
-            
-            // Create fiat currency element
-            const fiatCurrency = document.createElement('div');
-            fiatCurrency.className = 'fiat-currency';
-            fiatCurrency.textContent = fiat;
+            price.textContent = `${formatPrice(priceData.price, fiat)} ${getFiatSymbol(fiat)}`;
             
             // Create price change element
             const priceChange = document.createElement('div');
@@ -447,8 +461,8 @@
                 portfolioValue = document.createElement('div');
                 portfolioValue.className = 'portfolio-value';
                 const totalValue = (priceData.price * quantity).toFixed(2);
-                portfolioValue.textContent = `Portfolio: ${formatPrice(totalValue, fiat)} ${fiat}`;
-                portfolioValue.setAttribute('aria-label', `Portfolio value: ${formatPrice(totalValue, fiat)} ${fiat}`);
+                portfolioValue.textContent = `Portfolio: ${formatPrice(totalValue, fiat)} ${getFiatSymbol(fiat)}`;
+                portfolioValue.setAttribute('aria-label', `Portfolio value: ${formatPrice(totalValue, fiat)} ${getFiatSymbol(fiat)}`);
                 
                 // Add quantity display
                 const quantityDisplay = document.createElement('div');
@@ -461,7 +475,6 @@
             widgetContent.appendChild(logo);
             infoContainer.appendChild(name);
             infoContainer.appendChild(price);
-            infoContainer.appendChild(fiatCurrency);
             infoContainer.appendChild(priceChange);
             if (portfolioValue) {
                 infoContainer.appendChild(portfolioValue);
