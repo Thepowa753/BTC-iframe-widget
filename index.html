@@ -440,9 +440,7 @@
             let portfolioValue = null;
             if (quantity > 0) {
                 portfolioValue = document.createElement('div');
-                portfolioValue.className = 'crypto-price';
-                portfolioValue.style.fontSize = 'clamp(18px, 5vw, 28px)';
-                portfolioValue.style.marginTop = '10px';
+                portfolioValue.className = 'portfolio-value';
                 const totalValue = priceData.price * quantity;
                 portfolioValue.textContent = `Portfolio: ${formatPrice(totalValue, fiat)} ${fiat}`;
                 portfolioValue.setAttribute('aria-label', `Portfolio value: ${formatPrice(totalValue, fiat)} ${fiat}`);
