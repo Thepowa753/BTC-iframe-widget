@@ -128,12 +128,23 @@
     </div>
 
     <script>
-        // Get parameters from URL
+        // List of supported cryptocurrencies and fiat currencies
+        const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM', 'USDT', 'USDC'];
+        const SUPPORTED_FIATS = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'KRW', 'BRL', 'USDT', 'BUSD'];
+
+        // Get parameters from URL with validation
         function getUrlParams() {
             const params = new URLSearchParams(window.location.search);
+            const crypto = (params.get('crypto') || 'BTC').toUpperCase();
+            const fiat = (params.get('fiat') || 'EUR').toUpperCase();
+            
+            // Validate against allowlist
+            const validCrypto = SUPPORTED_CRYPTOS.includes(crypto) ? crypto : 'BTC';
+            const validFiat = SUPPORTED_FIATS.includes(fiat) ? fiat : 'EUR';
+            
             return {
-                crypto: (params.get('crypto') || 'BTC').toUpperCase(),
-                fiat: (params.get('fiat') || 'EUR').toUpperCase()
+                crypto: validCrypto,
+                fiat: validFiat
             };
         }
 
@@ -233,6 +244,9 @@
             `;
         }
 
+        // Global interval ID for cleanup
+        let priceUpdateInterval = null;
+
         // Initialize widget
         async function initWidget() {
             const { crypto, fiat } = getUrlParams();
@@ -240,13 +254,23 @@
             const priceData = await fetchCryptoPrice(crypto, fiat);
             displayWidget(crypto, fiat, priceData);
             
+            // Clear any existing interval
+            if (priceUpdateInterval) {
+                clearInterval(priceUpdateInterval);
+            }
+            
             // Update price every 30 seconds
-            setInterval(async () => {
+            priceUpdateInterval = setInterval(async () => {
                 try {
                     const updatedPriceData = await fetchCryptoPrice(crypto, fiat);
                     displayWidget(crypto, fiat, updatedPriceData);
                 } catch (error) {
                     console.error('Error updating price:', error);
+                    // Display error indicator to user
+                    const updateTime = document.querySelector('.update-time');
+                    if (updateTime) {
+                        updateTime.innerHTML = '<span style="color: #e53e3e;">⚠ Update failed</span>';
+                    }
                 }
             }, 30000);
         }
