@@ -128,6 +128,9 @@
     </div>
 
     <script>
+        // Configuration constants
+        const UPDATE_INTERVAL_MS = 30000; // 30 seconds
+
         // List of supported cryptocurrencies and fiat currencies
         const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM'];
         const SUPPORTED_FIATS = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'KRW', 'BRL', 'TRY', 'ZAR'];
@@ -234,16 +237,47 @@
             const priceChangeClass = priceData.change >= 0 ? 'positive' : 'negative';
             const priceChangeSign = priceData.change >= 0 ? '+' : '';
             
-            widgetContent.innerHTML = `
-                <div class="crypto-logo">${getCryptoLogo(crypto)}</div>
-                <div class="crypto-name">${crypto}</div>
-                <div class="crypto-price">${formatPrice(priceData.price, fiat)}</div>
-                <div class="fiat-currency">${fiat}</div>
-                <div class="price-change ${priceChangeClass}">
-                    ${priceChangeSign}${priceData.change.toFixed(2)}% (24h)
-                </div>
-                <div class="update-time" id="update-time">Last updated: ${new Date().toLocaleTimeString()}</div>
-            `;
+            // Clear existing content
+            widgetContent.innerHTML = '';
+            
+            // Create logo element
+            const logo = document.createElement('div');
+            logo.className = 'crypto-logo';
+            logo.textContent = getCryptoLogo(crypto);
+            
+            // Create name element
+            const name = document.createElement('div');
+            name.className = 'crypto-name';
+            name.textContent = crypto;
+            
+            // Create price element
+            const price = document.createElement('div');
+            price.className = 'crypto-price';
+            price.textContent = formatPrice(priceData.price, fiat);
+            
+            // Create fiat currency element
+            const fiatCurrency = document.createElement('div');
+            fiatCurrency.className = 'fiat-currency';
+            fiatCurrency.textContent = fiat;
+            
+            // Create price change element
+            const priceChange = document.createElement('div');
+            priceChange.className = `price-change ${priceChangeClass}`;
+            priceChange.textContent = `${priceChangeSign}${priceData.change.toFixed(2)}% (24h)`;
+            
+            // Create update time element
+            const updateTime = document.createElement('div');
+            updateTime.className = 'update-time';
+            updateTime.id = 'update-time';
+            updateTime.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+            
+            // Append all elements
+            widgetContent.appendChild(logo);
+            widgetContent.appendChild(name);
+            widgetContent.appendChild(price);
+            widgetContent.appendChild(fiatCurrency);
+            widgetContent.appendChild(priceChange);
+            widgetContent.appendChild(updateTime);
         }
 
         // Show demo data warning
@@ -258,9 +292,13 @@
         // Display error message
         function displayError(message) {
             const widgetContent = document.getElementById('widget-content');
-            widgetContent.innerHTML = `
-                <div class="error">${message}</div>
-            `;
+            widgetContent.innerHTML = '';
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            widgetContent.appendChild(errorDiv);
         }
 
         // Global interval ID for cleanup
@@ -291,7 +329,7 @@
                     showDemoDataWarning();
                 }
                 
-                // Update price every 30 seconds
+                // Update price every UPDATE_INTERVAL_MS
                 priceUpdateInterval = setInterval(async () => {
                     // Skip if previous update is still in progress
                     if (isUpdating) return;
@@ -308,7 +346,7 @@
                     } finally {
                         isUpdating = false;
                     }
-                }, 30000);
+                }, UPDATE_INTERVAL_MS);
             } finally {
                 isInitializing = false;
             }
@@ -327,6 +365,7 @@
         document.addEventListener('visibilitychange', () => {
             if (document.hidden && priceUpdateInterval) {
                 clearInterval(priceUpdateInterval);
+                priceUpdateInterval = null;
             } else if (!document.hidden) {
                 // Reinitialize when page becomes visible again
                 initWidget();
