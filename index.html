@@ -129,7 +129,7 @@
 
     <script>
         // List of supported cryptocurrencies and fiat currencies
-        const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM', 'USDT', 'USDC'];
+        const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM'];
         const SUPPORTED_FIATS = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'KRW', 'BRL', 'TRY', 'ZAR'];
 
         // Get parameters from URL with validation
@@ -212,9 +212,14 @@
             return logos[crypto] || '₿';
         }
 
-        // Format price with appropriate decimals
+        // Format price with appropriate decimals based on currency
         function formatPrice(price, fiat) {
-            if (price >= 1000) {
+            // JPY and KRW typically don't use decimal places
+            const noDecimalCurrencies = ['JPY', 'KRW'];
+            
+            if (noDecimalCurrencies.includes(fiat)) {
+                return price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+            } else if (price >= 1000) {
                 return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             } else if (price >= 1) {
                 return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
@@ -289,6 +294,22 @@
 
         // Start widget on page load
         window.addEventListener('DOMContentLoaded', initWidget);
+        
+        // Cleanup on page unload or when page becomes hidden
+        window.addEventListener('beforeunload', () => {
+            if (priceUpdateInterval) {
+                clearInterval(priceUpdateInterval);
+            }
+        });
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden && priceUpdateInterval) {
+                clearInterval(priceUpdateInterval);
+            } else if (!document.hidden) {
+                // Reinitialize when page becomes visible again
+                initWidget();
+            }
+        });
     </script>
 </body>
 </html>
