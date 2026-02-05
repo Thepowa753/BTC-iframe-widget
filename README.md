@@ -9,6 +9,9 @@ Get data from API and show them in a pretty format. This widget is useful if you
 - Multiple fiat currency options
 - Light and dark theme support
 - Customizable dimensions
+- **Responsive scaling** - content automatically scales to fit any size without cutoff
+- **Portfolio value tracking** - show total value of your crypto holdings with `?quantity` parameter
+- **Automatic horizontal layout** - when width > height, widget organizes content horizontally
 - Cryptocurrency-specific color schemes
 - Auto-updating prices (every 30 seconds)
 
@@ -29,6 +32,7 @@ Embed the widget using an iframe with URL parameters to customize its appearance
 | `theme` | Color theme | `light` | `light`, `dark` |
 | `width` | Widget width in pixels | `300` | `100` - `2000` |
 | `height` | Widget height in pixels | `200` | `100` - `2000` |
+| `quantity` | Amount of crypto owned (shows portfolio value) | `0` | Any positive number |
 
 ### Examples
 
@@ -50,6 +54,16 @@ Embed the widget using an iframe with URL parameters to customize its appearance
 #### Dogecoin in GBP with dark theme and large size
 ```html
 <iframe src="https://thepowa753.github.io/BTC-iframe-widget/?crypto=DOGE&fiat=GBP&theme=dark&width=500&height=300" width="500" height="300" frameborder="0"></iframe>
+```
+
+#### Bitcoin with portfolio value (showing total value of 2.5 BTC)
+```html
+<iframe src="https://thepowa753.github.io/BTC-iframe-widget/?crypto=BTC&fiat=USD&theme=light&width=300&height=350&quantity=2.5" width="300" height="350" frameborder="0"></iframe>
+```
+
+#### Ethereum in horizontal layout (width > height)
+```html
+<iframe src="https://thepowa753.github.io/BTC-iframe-widget/?crypto=ETH&fiat=EUR&theme=light&width=500&height=200" width="500" height="200" frameborder="0"></iframe>
 ```
 
 ## Supported Cryptocurrencies
@@ -75,7 +89,7 @@ Each cryptocurrency has its own branded color scheme:
 ## Themes
 
 ### Light Theme
-- White background with light colors
+- Light blue background (#e6f2ff)
 - Perfect for light-colored websites
 - High contrast for readability
 
