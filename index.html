@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crypto Price Widget</title>
     <style>
+        :root {
+            --light-blue: #e6f2ff;
+            --light-blue-transparent: rgba(230, 242, 255, 0.95);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +27,7 @@
         }
 
         body.light {
-            background: #e6f2ff;
+            background: var(--light-blue);
         }
 
         body.dark {
@@ -69,7 +74,7 @@
         }
 
         .widget-container.light {
-            background: rgba(230, 242, 255, 0.95);
+            background: var(--light-blue-transparent);
         }
 
         .widget-container.dark {
@@ -271,8 +276,8 @@
             const validWidth = Math.min(Math.max(width, 100), 2000);
             const validHeight = Math.min(Math.max(height, 100), 2000);
             
-            // Validate quantity (must be positive or 0)
-            const validQuantity = quantity >= 0 ? quantity : 0;
+            // Validate quantity (must be positive; 0 or negative means no quantity specified)
+            const validQuantity = quantity > 0 ? quantity : 0;
             
             return {
                 crypto: validCrypto,
