@@ -249,11 +249,12 @@
             'LINK': { gradient: 'linear-gradient(135deg, #2a5ada 0%, #1e4ab8 100%)', shadow: 'rgba(42, 90, 218, 0.4)' },
             'UNI': { gradient: 'linear-gradient(135deg, #ff007a 0%, #d90063 100%)', shadow: 'rgba(255, 0, 122, 0.4)' },
             'ATOM': { gradient: 'linear-gradient(135deg, #2e3148 0%, #1c1e2e 100%)', shadow: 'rgba(46, 49, 72, 0.4)' },
-            'XLM': { gradient: 'linear-gradient(135deg, #141414 0%, #2d2d3f 100%)', shadow: 'rgba(20, 20, 20, 0.4)' }
+            'XLM': { gradient: 'linear-gradient(135deg, #141414 0%, #2d2d3f 100%)', shadow: 'rgba(20, 20, 20, 0.4)' },
+            'WLFI': { gradient: 'linear-gradient(135deg, #c8102e 0%, #002868 100%)', shadow: 'rgba(200, 16, 46, 0.4)' }
         };
 
         // List of supported cryptocurrencies and fiat currencies
-        const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM'];
+        const SUPPORTED_CRYPTOS = ['BTC', 'ETH', 'BNB', 'XRP', 'ADA', 'DOGE', 'SOL', 'DOT', 'MATIC', 'LTC', 'AVAX', 'LINK', 'UNI', 'ATOM', 'XLM', 'WLFI'];
         const SUPPORTED_FIATS = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'KRW', 'BRL', 'TRY', 'ZAR'];
         const SUPPORTED_THEMES = ['light', 'dark'];
 
@@ -392,7 +393,8 @@
                 'LINK': '⬡',
                 'UNI': 'Ⓤ',
                 'ATOM': '⚛',
-                'XLM': '*'
+                'XLM': '*',
+                'WLFI': 'W'
             };
             return logos[crypto] || '₿';
         }
